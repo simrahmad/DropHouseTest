@@ -28,7 +28,7 @@ router.post('/sync', async (req, res) => {
 				lastName: lastName || '',
 				email,
 				profileImage: profileImage || '',
-				role: 'Customer'
+				role: 'CUSTOMER'
 			}
 		})
 
