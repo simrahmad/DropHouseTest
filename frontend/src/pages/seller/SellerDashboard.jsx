@@ -327,8 +327,8 @@ type="datetime-local"
 value={form.endDate}
 onChange={e => setForm({ ...form, endDate: e.target.value })}
 onFocus={e => e.target.style.borderColor = pink.accent}
-onBlur={e => e.target.style.borderColor = pink.border}
-/>
+onBlur={e => e.target.style.borderColor = pink.border}/>
+
 </FormField>
 <FormField label="Description">
 <textarea
@@ -337,32 +337,19 @@ value={form.description}
 onChange={e => setForm({ ...form, description: e.target.value })}
 placeholder="Tell buyers what this drop is about..."
 onFocus={e => e.target.style.borderColor = pink.accent}
-onBlur={e => e.target.style.borderColor = pink.border}
-/>
+onBlur={e => e.target.style.borderColor = pink.border}/>
+
 </FormField>
 <FormField label="Cover image">
 <ImageUpload
 label="Upload drop cover"
 onUpload={url => setForm({ ...form, coverImage: url })}
-currentUrl={form.coverImage}
-/>
+currentUrl={form.coverImage}/>
+
 </FormField>
-</div>
-{msg && (
-<p style={{ marginTop: 12, fontSize: 13, color: msg.includes('created') ? pink.success : pink.danger }}>
-{msg}
-</p>
-)}
-<button
-style={{ ...styles.btn, marginTop: 20 }}
-onClick={submit}
-disabled={loading}
->
-{loading ? 'Creating...' : 'Create drop'}
-</button>
-</div>
-)
-}
+</div>{msg && ( <p style={{ marginTop: 12, fontSize: 13, color: msg.includes('created') ? pink.success : pink.danger }}>{msg}</p>)}
+<button style={{ ...styles.btn, marginTop: 20 }} onClick={submit}  disabled={loading}>
+{loading ? 'Creating...' : 'Create drop'}</button></div>)}
 
 function DropList({ drops, allProducts, onRefresh }) {
 const [expanded, setExpanded] = useState(null)
@@ -372,47 +359,39 @@ const [msg, setMsg] = useState({})
 async function addProduct(dropId) {
 if (!addingProductId) return
 try {
-await axios.patch(`${API}/drops/${dropId}/add-product`, { productId: addingProductId })
-setAddingProductId('')
-setMsg({ ...msg, [dropId]: 'Product added!' })
-onRefresh()
+    await axios.patch(`${API}/drops/${dropId}/add-product`, { productId: addingProductId })
+     setAddingProductId('')
+   setMsg({ ...msg, [dropId]: 'Product added!' })
+   onRefresh()
 setTimeout(() => setMsg(m => ({ ...m, [dropId]: '' })), 2500)
 } catch (err) {
-setMsg({ ...msg, [dropId]: err.response?.data?.error || 'Failed' })
-}
-}
+setMsg({ ...msg, [dropId]: err.response?.data?.error || 'Failed' })}}
 
 async function removeProduct(dropId, productId) {
 try {
 await axios.patch(`${API}/drops/${dropId}/remove-product`, { productId })
 onRefresh()
-} catch {}
-}
+} catch {}}
 
 async function publish(dropId) {
 try {
 await axios.patch(`${API}/drops/${dropId}/publish`)
 onRefresh()
 } catch (err) {
-alert(err.response?.data?.error || 'Failed to publish')
-}
-}
+alert(err.response?.data?.error || 'Failed to publish')}}
 async function deleteDrop(dropId) {
 if (!window.confirm('Delete this drop and all its products?')) return
 try {
 await axios.delete(`${API}/drops/${dropId}`)
 onRefresh()
 } catch (err) {
-alert(err.response?.data?.message || 'Failed to delete drop')
-}
-}
+alert(err.response?.data?.message || 'Failed to delete drop')}}
 
 if (drops.length === 0) {
 return (
 <div style={{ textAlign: 'center', padding: '40px 0', color: pink.muted, fontSize: 14 }}>
 No drops yet. Create one above!
-</div>
-)
+</div>)
 }
 
 return (
