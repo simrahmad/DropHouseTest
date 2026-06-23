@@ -34,13 +34,6 @@ className="text-sm font-semibold text-gray-600 hover:text-pink-500 transition-co
 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-pink-400 group-hover:w-full transition-all duration-200" />
 </Link>
 ))}
-
-{user && (
-<Link to="/seller/dashboard"
-className="text-sm font-semibold text-gray-600 hover:text-pink-500 transition-colors duration-200">
-Seller Dashboard
-</Link>
-)}
 </div>
 
 <div className="flex items-center gap-4">

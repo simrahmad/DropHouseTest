@@ -42,7 +42,6 @@ console.error(err)
 res.status(500).json({ message: err.message || 'Something went wrong' })
 })
 
-const PORT = process.env.PORT || 5000
-app.listen(PORT, () => {
-console.log(`DropHouse backend running on port ${PORT}`)
+app.listen(5000, () => {
+console.log('DropHouse backend running on port 5000')
 })

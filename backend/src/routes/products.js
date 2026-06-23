@@ -23,6 +23,8 @@ res.status(500).json({ error: 'Failed to fetch products' })
 // GET /api/products/seller — seller's own products
 router.get('/seller', async (req, res) => {
 try {
+const clerkId = req.auth?.userId
+
 
 const user = await prisma.user.findUnique({ where: { clerkId } })
 if (!user) return res.status(404).json({ error: 'User not found' })
@@ -81,6 +83,8 @@ res.status(500).json({ error: 'Failed to fetch product' })
 // POST /api/products — seller creates a product (dropId is optional)
 router.post('/', async (req, res) => {
 try {
+const clerkId = req.auth?.userId
+
 
 const {
 name, description, price, stock,

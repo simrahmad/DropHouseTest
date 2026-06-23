@@ -18,10 +18,10 @@ const formData = new FormData()
 formData.append('image', file)
 
 try {
-const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/upload`, formData, {
+const res = await axios.post('http://localhost:5000/api/upload', formData, {
 headers: { 'Content-Type': 'multipart/form-data' }
 })
-const url = import.meta.env.VITE_API_URL + res.data.imageUrl
+const url = 'http://localhost:5000' + res.data.imageUrl
 setPreview(url)
 onUpload(url)
 } catch (err) {

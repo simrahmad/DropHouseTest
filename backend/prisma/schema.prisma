@@ -7,58 +7,57 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
 model User {
-id           String    @id @default(cuid())
+id      String    @id @default(cuid())
 clerkId      String    @unique
-firstName    String
-lastName     String?
-email        String    @unique
+firstName      String
+lastName       String?
+email     String    @unique
 profileImage String?
-role         Role      @default(CUSTOMER)
-createdAt    DateTime  @default(now())
-updatedAt    DateTime  @updatedAt
+role      Role      @default(CUSTOMER)
+createdAt  DateTime  @default(now())
+updatedAt  DateTime  @updatedAt
 addresses    Address[]
-cart         Cart?
-drops        Drop[]
-orders       Order[]
-wishlist     Wishlist?
+cart   Cart?
+drops  Drop[]
+orders    Order[]
+wishlist  Wishlist?
 }
 
 model Drop {
-id          String     @id @default(cuid())
-title       String
-slug        String     @unique
+id  String     @id @default(cuid())
+title String
+slug  String     @unique
 description String
 coverImage  String
 releaseDate DateTime
-endDate     DateTime
-status      DropStatus @default(UPCOMING)
-isReady     Boolean    @default(false)
-sellerId    String
-createdAt   DateTime   @default(now())
-updatedAt   DateTime   @updatedAt
-seller      User       @relation(fields: [sellerId], references: [id])
-products    Product[]
+endDate DateTime
+status DropStatus @default(UPCOMING)
+isReady Boolean    @default(false)
+sellerId String
+createdAt DateTime   @default(now())
+updatedAt DateTime   @updatedAt
+seller User       @relation(fields: [sellerId], references: [id])
+products Product[]
 }
 
 model Product {
-id            String           @id @default(cuid())
-name          String
-description   String
-price         Decimal
-stock         Int
-imageUrl      String
-category      String?
-sku           String?
-isActive      Boolean          @default(true)
-dropId        String?
-createdAt     DateTime         @default(now())
-updatedAt     DateTime         @updatedAt
-cartItems     CartItem[]
-orderItems    OrderItem[]
-drop          Drop?            @relation(fields: [dropId], references: [id])
-variants      ProductVariant[]
+id  String           @id @default(cuid())
+name  String
+description String
+price  Decimal
+stock  Int
+imageUrl String
+category String?
+sku  String?
+isActive Boolean          @default(true)
+dropId  String?
+createdAt DateTime         @default(now())
+updatedAt DateTime         @updatedAt
+cartItems CartItem[]
+orderItems OrderItem[]
+drop  Drop?   @relation(fields: [dropId], references: [id])
+variants    ProductVariant[]
 wishlistItems WishlistItem[]
 }
 
@@ -73,96 +72,92 @@ product   Product  @relation(fields: [productId], references: [id])
 }
 
 model Cart {
-id        String     @id @default(cuid())
-userId    String     @unique
+id    String     @id @default(cuid())
+userId  String     @unique
 createdAt DateTime   @default(now())
-user      User       @relation(fields: [userId], references: [id])
-items     CartItem[]
+user  User       @relation(fields: [userId], references: [id])
+items CartItem[]
 }
 
 model CartItem {
-id        String   @id @default(cuid())
+id   String   @id @default(cuid())
 cartId    String
 productId String
 quantity  Int
 addedAt   DateTime @default(now())
-cart      Cart     @relation(fields: [cartId], references: [id])
-product   Product  @relation(fields: [productId], references: [id])
+cart  Cart     @relation(fields: [cartId], references: [id])
+product  Product  @relation(fields: [productId], references: [id])
 }
-
 model Order {
-id                String        @id @default(cuid())
-userId            String
-totalAmount       Decimal
-status            OrderStatus   @default(PENDING)
-paymentStatus     PaymentStatus @default(PENDING)
+id  String        @id @default(cuid())
+userId String
+totalAmount  Decimal
+status  OrderStatus   @default(PENDING)
+paymentStatus PaymentStatus @default(PENDING)
 stripeSessionId   String?
 shippingAddressId String
-createdAt         DateTime      @default(now())
+createdAt  DateTime      @default(now())
 shippingAddress   Address       @relation(fields: [shippingAddressId], references: [id])
-user              User          @relation(fields: [userId], references: [id])
-items             OrderItem[]
-payment           Payment?
+user   User          @relation(fields: [userId], references: [id])
+items  OrderItem[]
+payment Payment?
 }
-
 model OrderItem {
-id        String  @id @default(cuid())
+id  String  @id @default(cuid())
 orderId   String
 productId String
 quantity  Int
 unitPrice Decimal
-order     Order   @relation(fields: [orderId], references: [id])
-product   Product @relation(fields: [productId], references: [id])
+order Order   @relation(fields: [orderId], references: [id])
+product Product @relation(fields: [productId], references: [id])
 }
 
 model Address {
-id            String   @id @default(cuid())
-userId        String
-fullName      String
-phoneNumber   String
-country       String
-city          String
-postalCode    String
+id  String   @id @default(cuid())
+userId String
+fullName String
+phoneNumber String
+country  String
+city String
+postalCode  String
 streetAddress String
-createdAt     DateTime @default(now())
-user          User     @relation(fields: [userId], references: [id])
-orders        Order[]
+createdAt DateTime @default(now())
+user User     @relation(fields: [userId], references: [id])
+orders Order[]
 }
 
 model Payment {
-id              String   @id @default(cuid())
-orderId         String   @unique
+id  String   @id @default(cuid())
+orderId String   @unique
 stripePaymentId String
-amount          Decimal
-currency        String
-status          String
-createdAt       DateTime @default(now())
-order           Order    @relation(fields: [orderId], references: [id])
+amount  Decimal
+currency String
+status  String
+createdAt DateTime @default(now())
+order  Order    @relation(fields: [orderId], references: [id])
 }
 
 model Wishlist {
-id        String         @id @default(cuid())
-userId    String         @unique
+id  String         @id @default(cuid())
+userId String         @unique
 createdAt DateTime       @default(now())
-user      User           @relation(fields: [userId], references: [id])
-items     WishlistItem[]
+user User           @relation(fields: [userId], references: [id])
+items WishlistItem[]
 }
 
 model WishlistItem {
-id         String   @id @default(cuid())
+id  String   @id @default(cuid())
 wishlistId String
 productId  String
 createdAt  DateTime @default(now())
 product    Product  @relation(fields: [productId], references: [id])
 wishlist   Wishlist @relation(fields: [wishlistId], references: [id])
 }
-
 enum Role {
 CUSTOMER
 SELLER
 ADMIN
 }
-
 enum DropStatus {
 UPCOMING
 LIVE

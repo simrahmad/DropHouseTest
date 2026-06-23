@@ -7,7 +7,7 @@ const prisma = new PrismaClient()
 async function requireAdmin(req, res, next) {
 try {
 const clerkId = req.auth?.userId
-if (!clerkId) return res.status(401).json({ error: 'Unauthorized' })
+
 
 const user = await prisma.user.findUnique({ where: { clerkId } })
 if (!user || user.role !== 'ADMIN') {

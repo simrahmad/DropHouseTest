@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import Navbar from '../components/Navbar'
+import { useUser } from '@clerk/clerk-react'
 
 function ProductDetailPage() {
 const { id } = useParams()
 const navigate = useNavigate()
+const { user } = useUser()
 const [product, setProduct] = useState(null)
 const [loading, setLoading] = useState(true)
 const [selectedVariant, setSelectedVariant] = useState(null)
@@ -19,29 +21,20 @@ axios.get(`${import.meta.env.VITE_API_URL}/api/products/${id}`)
 .finally(() => setLoading(false))
 }, [id])
 
-const handleAddToCart = () => {
-const cart = JSON.parse(localStorage.getItem('cart') || '[]')
-const existing = cart.find(item => item.productId === product.id && item.variantId === selectedVariant?.id)
-
-if (existing) {
-existing.quantity += quantity
-} else {
-cart.push({
+const handleAddToCart = async () => {
+try {
+await axios.post(`${import.meta.env.VITE_API_URL}/api/cart/add`, {
+clerkId: user.id,
 productId: product.id,
-name: product.name,
-price: product.price,
-imageUrl: product.imageUrl,
-quantity,
-variantId: selectedVariant?.id || null,
-size: selectedVariant?.size || null,
-color: selectedVariant?.color || null
+quantity
 })
-}
-
-localStorage.setItem('cart', JSON.stringify(cart))
 setAdded(true)
 setTimeout(() => setAdded(false), 2000)
+} catch (err) {
+console.error('Failed to add to cart', err)
 }
+}
+
 
 if (loading) {
 return (

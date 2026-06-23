@@ -14,16 +14,10 @@ if (!isLoaded || !user) return
 const check = async () => {
 try {
 const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/me/${user.id}`)
-setRole(res.data.role)
-} catch {
-setRole(null)
-} finally {
-setChecking(false)
-}
-}
+setRole(res.data.role)} catch {setRole(null)}finally {
+setChecking(false)}}
 
-check()
-}, [isLoaded, user])
+check()}, [isLoaded, user])
 
 if (!isLoaded || checking) {
 return (

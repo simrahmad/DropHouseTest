@@ -78,16 +78,23 @@ Order ID
 </div>
 
 <div className="text-center">
-   <p className="text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: '#9ca3af' }}>Date</p>
-   <p className="text-sm font-medium" style={{ color: '#1a1a2e' }}>
-   {new Date(order.createdAt).toLocaleDateString('en-US', {
-   day: 'numeric', month: 'short', year: 'numeric'})}
-   </p>
+<p className="text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: '#9ca3af' }}>
+Date
+</p>
+<p className="text-sm font-medium" style={{ color: '#1a1a2e' }}>
+{new Date(order.createdAt).toLocaleDateString('en-US', {
+day: 'numeric', month: 'short', year: 'numeric'
+})}
+</p>
 </div>
 
 <div className="text-center">
-<p className="text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: '#9ca3af' }}>Total</p>
-<p className="text-lg font-bold" style={{ color: '#ec4899' }}>${parseFloat(order.totalAmount).toFixed(2)}</p>
+<p className="text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: '#9ca3af' }}>
+Total
+</p>
+<p className="text-lg font-bold" style={{ color: '#ec4899' }}>
+${parseFloat(order.totalAmount).toFixed(2)}
+</p>
 </div>
 
 <div>
@@ -98,6 +105,7 @@ style={{ backgroundColor: statusColor(order.status).bg, color: statusColor(order
 </div>
 </div>
 
+{/* Order items */}
 <div className="px-6 py-4">
 <div className="flex flex-col gap-3">
 {order.items.map(item => (
@@ -107,16 +115,23 @@ style={{ backgroundColor: statusColor(order.status).bg, color: statusColor(order
 className="w-full h-full object-cover"
 onError={e => e.target.src = '/images/product1.jpg'} />
 </div>
-     <div className="flex-1">
-   <p className="font-semibold text-sm" style={{ color: '#1a1a2e' }}>
-    {item.product.name}
+<div className="flex-1">
+<p className="font-semibold text-sm" style={{ color: '#1a1a2e' }}>
+{item.product.name}
 </p>
-<p className="text-xs" style={{ color: '#9ca3af' }}>Qty: {item.quantity} × ${parseFloat(item.unitPrice).toFixed(2)}</p></div>
+<p className="text-xs" style={{ color: '#9ca3af' }}>
+Qty: {item.quantity} × ${parseFloat(item.unitPrice).toFixed(2)}
+</p>
+</div>
 <span className="font-bold text-sm" style={{ color: '#ec4899' }}>
 ${(parseFloat(item.unitPrice) * item.quantity).toFixed(2)}
-</span></div>))}</div></div>
+</span>
+</div>
+))}
+</div>
+</div>
 
-
+{/* Shipping address */}
 {order.shippingAddress && (
 <div className="px-6 py-4"
 style={{ borderTop: '1px solid #fce7f3' }}>
@@ -133,6 +148,7 @@ Shipping To
 </div>
 )}
 
+{/* Payment status */}
 <div className="px-6 py-4 flex items-center justify-between"
 style={{ borderTop: '1px solid #fce7f3', backgroundColor: '#fff5f9' }}>
 <div className="flex items-center gap-2">
@@ -144,6 +160,16 @@ Payment {order.paymentStatus}
 <span className="text-xs" style={{ color: '#9ca3af' }}>
 via Stripe
 </span>
-</div></div>))}</div>)}</div></div>)}
+</div>
+
+</div>
+))}
+</div>
+)}
+
+</div>
+</div>
+)
+}
 
 export default MyOrdersPage
