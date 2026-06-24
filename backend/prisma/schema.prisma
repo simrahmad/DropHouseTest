@@ -18,6 +18,7 @@ role      Role      @default(CUSTOMER)
 createdAt  DateTime  @default(now())
 updatedAt  DateTime  @updatedAt
 addresses    Address[]
+products  Product[]  
 cart   Cart?
 drops  Drop[]
 orders    Order[]
@@ -55,8 +56,13 @@ dropId  String?
 createdAt DateTime         @default(now())
 updatedAt DateTime         @updatedAt
 cartItems CartItem[]
+sellerId  String   
+  seller    User     @relation(fields: [sellerId], references: [id], onDelete: Cascade)  
 orderItems OrderItem[]
 drop  Drop?   @relation(fields: [dropId], references: [id])
+ 
+ @@index([dropId])
+ @@index([sellerId]) 
 variants    ProductVariant[]
 wishlistItems WishlistItem[]
 }

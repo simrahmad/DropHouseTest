@@ -37,7 +37,9 @@ const { user } = useUser()
 const [drops, setDrops] = useState([])
 
 useEffect(() => {
+
 axios.get(`${import.meta.env.VITE_API_URL}/api/drops`)
+
 .then(res => setDrops(res.data))
 .catch(console.error)
 }, [])
@@ -94,12 +96,6 @@ return (
 </div>
 </div>
 
-
-
-
-
-
-
 <div className="text-center px-6 relative z-10">
     <img src="FullPage.png" className="w-200 h-100 rounded-3xl shadow-lg" />
     <div className="p-6"></div><br/>
@@ -140,7 +136,7 @@ return (
 <div>
 <p className="text-sm font-semibold uppercase tracking-widest mb-1 text-pink-400 text-center">This Week</p>
 <h2 className="text-3xl font-bold text-pink-400 text-center">Welcome back, {user?.firstName} 👋</h2>
-<p className=" text-gray-400 font-extralight text-center">Here's what's dropping this week.</p><br/>
+<p className=" text-gray-400 font-extralight text-center">Here's what's dropping this week.</p><br/><br/>
 </div>
 <button className="hidden md:flex items-center gap-1 text-sm font-semibold transition-all hover:gap-2"
 style={{ color: '#ec4899' }}>View all drops →</button>
@@ -181,15 +177,16 @@ style={{ backgroundColor: '#fff', border: '1px solid #fce7f3' }}>
         <button type="submit"className="px-4 py-2.5 bg-pink-500 hover:bg-pink-600 text-white font-semibold text-sm transition-all whitespace-nowrap">Join</button></form></div>
         <br/>
 
-       <h1 className="text-pink-400  text-4xl  text-bold">CUSTOMER Reviews</h1><br/> 
-        <p>"Absolutely love the quality! The fabric feels premium, the fit is perfect, and the delivery was faster than expected. DropHouse has become my favorite fashion store."<br/><span className="text-pink-400">Ratings: ⭐⭐⭐⭐⭐ <img src="review1.jpg" className="w-10 h-10 flex justify-right rounded"/></span></p><br/>
+         <br/>
+         <div className="m-10 text-centre">
+        <p className="m-20 p-40">Absolutely love the quality! The fabric feels premium, the fit is perfect, and the delivery was faster than expected. DropHouse has become my favorite fashion store."<br/><span className="text-pink-400">Ratings: ⭐⭐⭐⭐⭐ <img src="review1.jpg" className="w-10 h-10 flex justify-right rounded"/></span></p><br/>
         <p>"The designs are trendy and unique. I ordered a hoodie and it looked even better in person. Highly recommended!"<br/><span className="text-pink-400">Ratings: ⭐⭐⭐⭐⭐ <img src="review2.jpg" className="w-10 h-10 flex justify-right rounded"/></span></p><br/>
         <p>"I've ordered multiple times from DropHouse and have never been disappointed. Stylish clothing, excellent quality, and amazing CUSTOMER service.""<br/><span className="text-pink-400">Ratings: ⭐⭐⭐⭐⭐ <img src="review3.jpg" className="w-10 h-10 flex justify-right rounded"/></span></p><br/>
         <p>"Affordable prices without compromising quality. It's rare to find fashion pieces this good at these prices."<br/><span className="text-pink-400">Ratings: ⭐⭐⭐⭐⭐ <img src="review4.jpg" className="w-10 h-10 flex justify-right rounded"/></span></p><br/>
-        
+        </div>
         </div>
         <div className="flex justify-end" >
-        <img src="hero-bg.png" className="hidden lg:flex w-full h-full relative overflow-hidden"/></div></div></div>
+        <img src="Reviews.jpg" className="hidden lg:flex w-full h-full relative overflow-hidden"/></div></div></div>
 </div>
 )
 }

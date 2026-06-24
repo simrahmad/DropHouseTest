@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import { useAuth } from '@clerk/clerk-react'
 
-const API = 'http://localhost:3001/api'
+const API = 'http://localhost:5000/api'
 
 const pink = {
 bg: '#fff5f9',
@@ -60,6 +61,7 @@ const TABS = ['Overview', 'Sold items', 'Orders', 'Users']
 
 export default function AdminDashboard() {
 const [tab, setTab] = useState('Overview')
+const { getToken } = useAuth()
 const [stats, setStats] = useState(null)
 const [soldItems, setSoldItems] = useState([])
 const [orders, setOrders] = useState([])
@@ -67,8 +69,11 @@ const [users, setUsers] = useState([])
 const [loading, setLoading] = useState(true)
 
 async function fetchStats() {
-try {
-const res = await axios.get(`${API}/admin/stats`)
+  try {
+    const token = await getToken()  // ✅ ADD THIS
+    const res = await axios.get(`${API}/admin/stats`, {
+      headers: { 'Authorization': `Bearer ${token}` }  // ✅ ADD THIS
+    })
 setStats(res.data)
 } catch {}
 }
@@ -82,14 +87,21 @@ setSoldItems(res.data)
 
 async function fetchOrders() {
 try {
-const res = await axios.get(`${API}/admin/orders`)
+    const token = await getToken() 
+const res = await axios.get(`${API}/admin/orders`, {
+      headers: { 'Authorization': `Bearer ${token}` }  // ✅ ADD THIS
+    })
+
 setOrders(res.data)
 } catch {}
 }
 
 async function fetchUsers() {
 try {
-const res = await axios.get(`${API}/admin/users`)
+    const token = await getToken()
+const res = await axios.get(`${API}/admin/users`, {
+      headers: { 'Authorization': `Bearer ${token}` }  // ✅ ADD THIS
+    })
 setUsers(res.data)
 } catch {}
 }
@@ -104,7 +116,10 @@ init()
 
 async function changeRole(userId, role) {
 try {
-await axios.patch(`${API}/admin/users/${userId}/role`, { role })
+    const token = await getToken()
+await axios.patch(`${API}/admin/users/${userId}/role`, { role }, {
+      headers: { 'Authorization': `Bearer ${token}` }  
+    })
 fetchUsers()
 } catch {}
 }
@@ -112,7 +127,7 @@ fetchUsers()
 return (
 <div style={s.page}>
 <aside style={s.sidebar}>
-<div style={s.sideTitle}>Admin</div>
+<div style={s.sideTitle}><img src="/DropHouse.png"/>Admin</div>
 {TABS.map(t => (
 <div key={t} style={s.sideItem(tab === t)} onClick={() => setTab(t)}>
 <span>{
@@ -132,6 +147,7 @@ t === 'Orders' ? '📦' : '👥'
 <>
 {tab === 'Overview' && stats && (
 <div>
+    <img src="/images/AdminPage.png" className="w-500x"/>
 <div style={s.pageTitle}>Dashboard overview</div>
 <div style={s.pageSubtitle}>Everything happening across DropHouse right now.</div>
 <div style={s.statsRow}>

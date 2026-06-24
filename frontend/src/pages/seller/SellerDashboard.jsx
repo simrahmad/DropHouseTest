@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useUser } from '@clerk/clerk-react'
+import { useUser, useAuth } from '@clerk/clerk-react'
 import axios from 'axios'
 import ImageUpload from '../../components/ImageUpload'
 
@@ -282,9 +282,8 @@ return
 setLoading(true)
 try {
 await axios.post(`${API}/drops`, { ...form, clerkId: userId })
-setMsg('Drop created! Now add products to it below.')
-setForm({ title: '', description: '', coverImage: '', releaseDate: '', endDate: '' })
-onCreated()
+setMsg('Drop created!')
+// missing closing } for try block here
 } catch (err) {
 setMsg(err.response?.data?.error || 'Something went wrong')
 } finally {
@@ -343,7 +342,7 @@ onBlur={e => e.target.style.borderColor = pink.border}/>
 <FormField label="Cover image">
 <ImageUpload
 label="Upload drop cover"
-onUpload={url => setForm({ ...form, coverImage: url })}
+onUpload={url => setForm(prev => ({ ...prev, coverImage: url }))}
 currentUrl={form.coverImage}/>
 
 </FormField>
@@ -495,7 +494,8 @@ Add
 )
 }
 
-function CreateProductForm({ drops, onCreated }) {
+function CreateProductForm({ drops, onCreated, userId }) {
+  const { getToken } = useAuth()
 const [form, setForm] = useState({
 name: '', description: '', price: '', stock: '',
 imageUrl: '', category: '', sku: '', dropId: ''
@@ -504,23 +504,29 @@ const [loading, setLoading] = useState(false)
 const [msg, setMsg] = useState('')
 
 async function submit() {
-if (!form.name || !form.description || !form.price || !form.stock || !form.imageUrl) {
-setMsg('Please fill all required fields.')
-return
+  if (!userId) {
+    setMsg('User not found. Please refresh the page.')
+    return
+  }
+  if (!form.name || !form.description || !form.price || !form.stock || !form.imageUrl) {
+    setMsg('Please fill in all required fields and upload a product image.')
+    return
+  }
+  setLoading(true)
+  try {
+    const token = await getToken()
+    await axios.post(`${API}/products`, { ...form, clerkId: userId }, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    setMsg('Product created!')
+    setForm({ name: '', description: '', price: '', stock: '', imageUrl: '', category: '', sku: '', dropId: '' })
+    onCreated()
+  } catch (err) {
+    setMsg(err.response?.data?.error || 'Something went wrong')
+  } finally {
+    setLoading(false)
+  }
 }
-setLoading(true)
-try {
-await axios.post(`${API}/products`, form)
-setMsg('Product created!')
-setForm({ name: '', description: '', price: '', stock: '', imageUrl: '', category: '', sku: '', dropId: '' })
-onCreated()
-} catch (err) {
-setMsg(err.response?.data?.error || 'Failed to create product')
-} finally {
-setLoading(false)
-}
-}
-
 return (
 <div style={styles.card}>
 <div style={styles.sectionTitle}>Add a new product</div>
@@ -574,7 +580,11 @@ onFocus={e => e.target.style.borderColor = pink.accent}
 onBlur={e => e.target.style.borderColor = pink.border} />
 </FormField>
 <FormField label="Product image *">
-<ImageUpload label="Upload product image" onUpload={url => setForm({ ...form, imageUrl: url })} currentUrl={form.imageUrl} />
+<ImageUpload 
+label="Upload product image" 
+onUpload={url => setForm(prev => ({ ...prev, imageUrl: url }))}
+currentUrl={form.imageUrl} 
+/>
 </FormField>
 </div>
 {msg && (
@@ -655,18 +665,21 @@ const [loading, setLoading] = useState(true)
 async function fetchData() {
 if (!user) return
 try {
-const dropsRes = await axios.get(`${API}/drops/seller/${user.id}`)
+const [dropsRes, productsRes] = await Promise.all([
+axios.get(`${API}/drops/seller/${user.id}`),
+axios.get(`${API}/products?sellerId=${user.id}`)
+])
 setDrops(dropsRes.data)
-
-const allProducts = dropsRes.data.flatMap(drop => drop.products || [])
-setProducts(allProducts)
+setProducts(productsRes.data)
 } catch (err) {
 console.error('Failed to load data', err)
 } finally {
 setLoading(false)
 }
 }
-useEffect(() => { fetchData() }, [])
+useEffect(() => { 
+if (user) fetchData() 
+}, [user])
 
 const liveDrops = drops.filter(d => d.status === 'LIVE').length
 const totalRevenue = 0 // would come from orders in a real scenario
@@ -676,7 +689,7 @@ return (
 
 {/* sidebar */}
 <aside style={styles.sidebar}>
-<div style={styles.sidebarTitle}>DropHouse</div>
+<div style={styles.sidebarTitle}> <img src="/DropHouse.png"/></div>
 {TABS.map(t => (
 <div key={t} style={styles.sidebarItem(tab === t)} onClick={() => setTab(t)}>
 <span>{t === 'Overview' ? '📊' : t === 'Drops' ? '🔥' : '📦'}</span>
@@ -753,6 +766,7 @@ Seller
 )}
 
 {tab === 'Drops' && (
+
 <div>
 <div style={styles.pageHeader}>
 <div style={styles.pageTitle}>Drops</div>
@@ -764,6 +778,7 @@ Seller
 <DropList drops={drops} allProducts={products} onRefresh={fetchData} />
 </div>
 </div>
+
 )}
 
 {tab === 'Products' && (
@@ -772,7 +787,8 @@ Seller
 <div style={styles.pageTitle}>Products</div>
 <div style={styles.pageSubtitle}>Add products standalone or assign them to a drop.</div>
 </div>
-<CreateProductForm drops={drops} onCreated={fetchData} />
+
+<CreateProductForm drops={drops} onCreated={fetchData} userId={user?.id} />
 <div style={styles.card}>
 <div style={styles.sectionTitle}>All your products ({products.length})</div>
 <ProductList products={products} drops={drops} />

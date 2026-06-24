@@ -3,19 +3,22 @@ import { useUser } from '@clerk/clerk-react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import Navbar from '../../components/Navbar'
+import { useAuth } from '@clerk/clerk-react' 
 
 function CreateDrop() {
 const { user } = useUser()
 const navigate = useNavigate()
+const { getToken } = useAuth()  // ✅ ADD THIS
 const [loading, setLoading] = useState(false)
 const [error, setError] = useState('')
 
 const [form, setForm] = useState({
-title: '',
-description: '',
-coverImage: '',
-releaseDate: '',
-status: 'UPCOMING'
+  title: '',
+  description: '',
+  coverImage: '',
+  releaseDate: '',
+  endDate: '',  // ✅ ADD THIS
+  status: 'UPCOMING'
 })
 
 const handleChange = e => {
@@ -23,15 +26,21 @@ setForm({ ...form, [e.target.name]: e.target.value })
 }
 
 const handleSubmit = async e => {
-e.preventDefault()
-setError('')
-setLoading(true)
+  e.preventDefault()
+  setError('')
+  setLoading(true)
 
-try {
-await axios.post(`${import.meta.env.VITE_API_URL}/api/drops`, {
-...form,
-clerkId: user.id
-})
+  try {
+    const token = await getToken() 
+    await axios.post(`http://localhost:5000/api/drops`, {
+      title: form.title,
+      description: form.description,
+      coverImage: form.coverImage,
+      releaseDate: form.releaseDate,
+      endDate: form.endDate
+    }, {
+      headers: { 'Authorization': `Bearer ${token}` }  // ✅ ADD THIS
+    })
 navigate('/seller/dashboard')
 } catch (err) {
 setError(err.response?.data?.message || 'Something went wrong')
@@ -117,6 +126,18 @@ required
 className="px-4 py-3 rounded-xl text-sm transition-all"
 style={{ border: '1px solid #fce7f3', backgroundColor: '#fff5f9', color: '#1a1a2e' }}
 />
+<div className="flex flex-col gap-1">
+<label className="text-sm font-medium" style={{ color: '#374151' }}>End Date</label>
+<input
+type="datetime-local"
+name="endDate"
+value={form.endDate}
+onChange={handleChange}
+required
+className="px-4 py-3 rounded-xl text-sm transition-all"
+style={{ border: '1px solid #fce7f3', backgroundColor: '#fff5f9', color: '#1a1a2e' }}
+/>
+</div>
 </div>
 
 <div className="flex flex-col gap-1">

@@ -3,6 +3,7 @@ import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
 import HomePage from './pages/HomePage'
 import DropsPage from './pages/DropsPage'
+import ProductsPage from './pages/ProductsPage'
 import DropDetailPage from './pages/DropDetailPage'
 import ProductDetailPage from './pages/ProductDetailPage'
 import CartPage from './pages/CartPage'
@@ -41,6 +42,9 @@ return (
 <Route path="/checkout" element={
 <ProtectedRoute><CheckoutPage /></ProtectedRoute>
 } />
+
+<Route path="/products" element={<ProductsPage />} />
+
 <Route path="/order-success" element={
 <ProtectedRoute><OrderSuccessPage /></ProtectedRoute>
 } />
