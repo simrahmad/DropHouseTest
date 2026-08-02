@@ -132,12 +132,4 @@ The frontend may require a publishable key from an authentication provider (for 
 
 Contributions are welcome — open an issue or submit a pull request. Please include a clear description of changes and any setup steps required to test them.
 
-## License
 
-This repository does not contain a license file. Add a `LICENSE` file to make the terms explicit (for example, the MIT license).
-
----
-
-If you'd like, I can:
-- Add example `.env.example` files for backend and frontend with the variables mentioned above
-- Update README with exact commands after you confirm the backend framework (Express/Koa/Fastify) and any authentication service used (Clerk, etc.)
